@@ -177,7 +177,7 @@
                 <a href="manageTask.eab">Manage Task</a>
                 <span class="icon-thumbnail">MT</span>
               </li>
-            </ul>
+            </ul>   
           </li>         
         </ul>
         <div class="clearfix"></div>
