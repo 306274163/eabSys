@@ -1,0 +1,74 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/security
+           http://www.springframework.org/schema/security/spring-security.xsd">
+
+	      <http use-expressions="true" disable-url-rewriting="true">
+          <!-- As Spring Security 4.0+ CSRF Protection is now enabled by default -->
+          <csrf disabled="true"/>
+
+		  <!-- no auth handler link -->
+		  <access-denied-handler error-page="/noauth.eab" />
+	  
+		  <!-- 所有操作需要有 ROLE_LOGIN 权限-->
+          <intercept-url pattern="/initlogin.eab" access="hasRole('ROLE_ANONYMOUS')"/>
+          <intercept-url pattern="/forgotpassword.eab" access="hasRole('ROLE_ANONYMOUS')"/>
+          <intercept-url pattern="/loginFailure.eab" access="hasRole('ROLE_ANONYMOUS')"/>
+          <intercept-url pattern="/logout.eab" access="hasRole('ROLE_ANONYMOUS')"/>		 
+		  <intercept-url pattern="/*.eab" access="hasRole('ROLE_USER')"/>
+
+          <!--配置登录页面-->
+		    <!--login-page指定遇到受限资源需要进行登录时候的页面-->
+          <!--authentication-success-handler-ref指定了登录认证成功后所做操作,指定這個default-target-url之类的就都不起作用了-->
+          <!--authentication-failure-url登錄失敗進行跳轉的頁面-->
+		    <form-login login-page="/loginFailure.eab?fail=sessionTimeout"
+                      login-processing-url="/login.eab"
+                      authentication-failure-url="/loginFailure.eab?fail=authFailure"
+                      authentication-success-handler-ref="authSuccess"  
+                      username-parameter="username"
+                      password-parameter="password"/>
+          <logout logout-url="/logout.eab" invalidate-session="false" logout-success-url="/initlogin.eab?fromLogout=Y"/>
+		  <!-- 检测失效的sessionId,超时时定位到另外一个URL -->
+		  <session-management invalid-session-url="/sessionTimeout.eab">
+		
+		  <!--
+		  max-sessions:允许用户帐号登录的次数。范例限制用户只能登录一次。
+		  exception-if-maximum-exceeded:默认为false，此值表示：用户第二次登录时，前一次的登录信息都被清空。当exception-if-maximum-exceeded="true"时系统会拒绝第二次登录。  
+		  -->
+            <concurrency-control error-if-maximum-exceeded="false" max-sessions="1" />
+          </session-management>
+        
+		  <!-- 增加一个自定义的filter，放在FILTER_SECURITY_INTERCEPTOR之前，  实现用户、角色、权限、资源的数据库管理。  -->
+		  <custom-filter ref="customFilter" before="FILTER_SECURITY_INTERCEPTOR"/>
+		   <remember-me />  <!--这个是配制自动login xh-->
+		  
+	  </http>
+	  
+	  <beans:bean id="customFilter" class="com.eastpro.security.MyFilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="myAuthenticationManager"/><!--自定义认证管理器-->
+		<beans:property name="accessDecisionManager" ref="myAccessDecisionManager"/><!--自定义决策管理器-->
+		<beans:property name="securityMetadataSource" ref="mySecurityMetadataSource"/>
+	  </beans:bean>
+	  
+      <authentication-manager alias="myAuthenticationManager" erase-credentials="false">  <!-- erase-credentials="false" 这个是配制自动login xh-->
+        <authentication-provider user-service-ref="myUserDetailService">
+			<!-- 盐值加密 [s]-->
+		   <password-encoder ref="passwordEncoder">
+			<salt-source user-property="username" />
+		   </password-encoder>
+		   <!-- 盐值加密 [e]-->
+        </authentication-provider>
+      </authentication-manager>
+      
+    <beans:bean id="passwordEncoder" class="com.eastpro.util.EabPasswordEncoder" />
+	<beans:bean id="myAccessDecisionManager" class="com.eastpro.security.MyAccessDecisionManager" />
+	<beans:bean id="mySecurityMetadataSource" class="com.eastpro.security.MySecurityMetadataSource" />
+	<beans:bean id="myUserDetailService" class="com.eastpro.security.MyUserDetailService" />
+
+ 	<beans:bean class="org.springframework.security.authentication.event.LoggerListener" />
+ 	 <beans:bean id="authSuccess" class="com.eastpro.security.AuthenticationSuccessHandlerImpl"/>
+	
+</beans:beans>

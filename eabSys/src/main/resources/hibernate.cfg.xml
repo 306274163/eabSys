@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <mapping class="com.eastpro.entity.SysUser"/>
+        <mapping class="com.eastpro.entity.TimesheetEntity"/> 
+        <mapping class="com.eastpro.entity.SysTaskCodeEntity"/>    
+        <mapping class="com.eastpro.entity.SysProjectEntity"/>  
+        <mapping class="com.eastpro.entity.SysLookEntity"/>          
+    </session-factory>
+</hibernate-configuration>
