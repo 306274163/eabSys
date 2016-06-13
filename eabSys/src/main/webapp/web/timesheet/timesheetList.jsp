@@ -29,7 +29,6 @@
     <link href="<c:url value="web/css/assets/plugins/switchery/css/switchery.min.css"/>" rel="stylesheet" type="text/css" media="screen" />
     <link href="<c:url value="web/images/css/pages-icons.css"/>" rel="stylesheet" type="text/css">
     <link class="main-stylesheet" href="<c:url value="web/images/css/pages.css"/>" rel="stylesheet" type="text/css" />
-     <%// SDFSDFSwerwwerwrwr-- %>
     <link href="<c:url value="web/css/assets/plugins/jquery-datatable/media/css/jquery.dataTables.css"/>" rel="stylesheet" type="text/css" />
     <link href="<c:url value="web/css/assets/plugins/jquery-datatable/extensions/FixedColumns/css/dataTables.fixedColumns.min.css"/>" rel="stylesheet" type="text/css" />
     <link href="<c:url value="web/css/assets/plugins/datatables-responsive/css/datatables.responsive.css"/>" rel="stylesheet" type="text/css" media="screen" />
